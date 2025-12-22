@@ -17,7 +17,10 @@ dotenv.config();
 
 // Create an Express app
 const app = express();  //why do we need to create an express app? -- it is easier to create the middleware and routes using express and it's inbuilt functions.
-app.use(cors());            
+app.use(cors({
+  origin: "devlink-ruby.vercel.app",
+  credentials: true
+}));          
 app.use(express.json());    //still can't figure out this middleware part
 
 // Routes
