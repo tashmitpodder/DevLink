@@ -6,7 +6,7 @@ import Signup from "./pages/auth/signup";
 import Profile from "./pages/profile/Profile";
 import Login from "./pages/auth/Login";
 import Dashboard from "./pages/dashboard";
-import Navbar from "./components/navbar";
+import Navbar from "./components/Navbar";
 import Posts from "./pages/Post/Posts";
 import Teams from "./pages/Teams/teams";
 import CreateTeam from "./pages/Teams/CreateTeam";
