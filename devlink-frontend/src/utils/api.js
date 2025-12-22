@@ -7,7 +7,7 @@
 // 🔧 Base URL from Vite env (set this in frontend/.env)
 // Example: VITE_API_URL=http://localhost:5000/api
 // Always point to backend root only
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 // Add /api prefix here
 function makeUrl(endpoint) {
