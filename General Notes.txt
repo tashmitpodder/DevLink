@@ -1,0 +1,15 @@
+General Notes
+
+1.Understand the teamRoutes logic
+2.Do the controller logic 
+3.need to understand what postsContext is in order to create teamsContext
+
+For the UI :
+
+delete options for teams
+creating teams and joining teams should be seperate
+how can i delete users
+automatic login after signup
+
+when logges it, the page should go away and the dashboard should open
+increase the functionality of teams page.. like teams details
