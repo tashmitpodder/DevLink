@@ -10,7 +10,7 @@ import Navbar from "./components/Navbar";
 import Posts from "./pages/Post/Posts";
 import Teams from "./pages/Teams/teams";
 import CreateTeam from "./pages/Teams/CreateTeam";
-import TeamDetails from "./pages/Teams/TeamDetails";
+import TeamDetails from "./pages/Teams/teamDetails";
 
 
 function App() {
