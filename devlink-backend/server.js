@@ -1,38 +1,45 @@
 // server.js
 
-// Import required modules
-import express from "express";        
-import mongoose from "mongoose";      
-import dotenv from "dotenv"; //used for loading the environment variables  
-import cors from "cors";              
-import authRoutes from "./routes/authRoutes.js"; 
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import cors from "cors";
+
+import authRoutes from "./routes/authRoutes.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
 
-
-// Load environment variables
 dotenv.config();
 
-// Create an Express app
-const app = express();  //why do we need to create an express app? -- it is easier to create the middleware and routes using express and it's inbuilt functions.
-app.use(cors({
-  origin: process.env.CLIENT_URL,
-  credentials: true
-}));          
-app.use(express.json());    //still can't figure out this middleware part
+const app = express();
+
+// ✅ 1. CORS MUST COME FIRST
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
+
+// ✅ 2. HANDLE PREFLIGHT REQUESTS (THIS FIXES YOUR ERROR)
+app.options("*", cors());
+
+// ✅ 3. JSON PARSER (must be after CORS)
+app.use(express.json());
 
 // Routes
-app.use("/api/auth", authRoutes);     // auth routes
-app.use("/api", dashboardRoutes);     // dashboard route
-app.use("/api", profileRoutes); // import dashboard routes
+app.use("/api/auth", authRoutes);
+app.use("/api", dashboardRoutes);
+app.use("/api", profileRoutes);
 app.use("/api/posts", postRoutes);
 app.use("/api/teams", teamRoutes);
 
-// Get PORT and MongoDB URI from .env
-const PORT = process.env.PORT || 5000;        
-const MONGO_URI = process.env.MONGO_URI;      
+// Port & DB
+const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.MONGO_URI;
+   
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI)                   
