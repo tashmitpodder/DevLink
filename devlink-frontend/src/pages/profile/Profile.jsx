@@ -40,7 +40,7 @@ export default function Profile() {
   /* ---------- Fetch Profile ---------- */
   useEffect(() => {
     const fetchProfile = async () => {
-      const data = await apiRequest("/api/profile", "GET", null, token);
+      const data = await apiRequest("/profile", "GET", null, token);
       setProfile({
         bio: data.bio || "",
         skills: data.skills?.join(", ") || "",
