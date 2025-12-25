@@ -54,6 +54,8 @@ The system was intended to be **scalable, modular, and extensible**.
 ---
 
 ## 📁 Project Structure (Simplified)
+
+```
 DevLink/
 ├── client/ ← React (Vite) frontend
 │ ├── pages/ ← Page-level components
@@ -72,6 +74,8 @@ DevLink/
 ├── .env ← Environment variables
 ├── package.json
 └── README.md
+
+```
 
 ---
 
