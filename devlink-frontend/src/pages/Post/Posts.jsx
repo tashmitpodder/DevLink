@@ -13,12 +13,12 @@ export default function Posts() {
   const [submitting, setSubmitting] = useState(false);
   const [localError, setLocalError] = useState("");
 
-  // ✏️ edit state
+  //  edit state
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const [editTags, setEditTags] = useState("");
 
-  // ✅ derive "my posts"
+  // derive "my posts"
   const myPosts =
     user && Array.isArray(feed)
       ? feed.filter((p) => p.author?._id === user.id)
@@ -99,7 +99,9 @@ export default function Posts() {
         <form onSubmit={onSubmit} className="card border rounded-2xl p-4 mb-6 shadow-sm">
           <textarea
             rows={3}
-            className="w-full border rounded-lg p-3"
+            className="w-full border rounded-lg p-3 
+             bg-white text-black 
+             dark:bg-gray-800 dark:text-white"
             placeholder="Share what you're building or looking for…"
             value={content}
             onChange={(e) => setContent(e.target.value)}
