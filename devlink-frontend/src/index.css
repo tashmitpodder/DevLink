@@ -1,31 +1,130 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer components {
-  .card {
-    @apply bg-white dark:bg-[#161b22]
-           border border-gray-200 dark:border-[#30363d]
-           rounded-lg;
+/* ── Base ─────────────────────────────────────────── */
+@layer base {
+  html {
+    font-family: "Inter", system-ui, sans-serif;
+    scroll-behavior: smooth;
   }
 
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 99px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+
+/* ── Components ───────────────────────────────────── */
+@layer components {
+
+  /* Glass card */
+  .card {
+    @apply bg-white dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.07] rounded-2xl shadow-sm dark:shadow-none backdrop-blur-sm;
+  }
+
+  /* Inputs */
   .input-base {
-  @apply w-full border rounded-lg p-2
-    bg-white text-black
-    dark:bg-[#0d1117] dark:text-[#e6edf3]
-    dark:border-gray-700
-    placeholder-gray-400 dark:placeholder-gray-500;
+    @apply w-full px-4 py-2.5 rounded-xl border text-sm bg-white dark:bg-white/5 text-gray-900 dark:text-gray-100 border-gray-200 dark:border-white/10 placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-black/20 dark:focus:ring-white/20 focus:border-gray-400 dark:focus:border-white/30 transition;
+  }
+
+  .textarea-base {
+    @apply input-base resize-none;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-gray-900 text-white dark:bg-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-100 hover:-translate-y-0.5 active:translate-y-0 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-gray-300 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-white/5 transition-all duration-150;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600 text-white hover:bg-red-500 hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 transition-all duration-200;
+  }
+
+  /* Tag chip — monochrome */
+  .tag-chip {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-white/[0.08] text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-white/10;
+  }
+
+  /* Section heading */
+  .section-title {
+    @apply text-2xl font-bold tracking-tight text-gray-900 dark:text-white;
+  }
+
+  /* Avatar circle */
+  .avatar {
+    @apply flex items-center justify-center rounded-full bg-zinc-800 dark:bg-zinc-700 text-white font-semibold select-none shrink-0;
+  }
+
+  /* Skeleton */
+  .skeleton {
+    @apply animate-pulse rounded-xl bg-gray-200 dark:bg-white/5;
+  }
 }
 
-.textarea-base {
-  @apply w-full border rounded-lg p-3
-    bg-white text-black
-    dark:bg-[#0d1117] dark:text-[#e6edf3]
-    dark:border-gray-700
-    placeholder-gray-400 dark:placeholder-gray-500;
-}
-}
+/* ── Utilities ─────────────────────────────────────── */
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease both;
+  }
 
-html, body, #root {
-  height: 100%;
+  .animate-slide-up {
+    animation: slideUp 0.4s ease both;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0
+    }
+
+    to {
+      opacity: 1
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(16px)
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0)
+    }
+  }
+
+  /* Crisp white/black text — no color gradient */
+  .gradient-text {
+    @apply font-extrabold text-gray-900 dark:text-white;
+  }
 }
