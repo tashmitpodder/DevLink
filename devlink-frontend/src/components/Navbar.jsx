@@ -48,7 +48,7 @@ export default function Navbar() {
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
 
           {/* Logo */}
-          <Link to="/" className="font-extrabold text-xl tracking-tight text-gray-900 dark:text-white select-none">
+          <Link to="/dashboard" className="font-extrabold text-xl tracking-tight text-gray-900 dark:text-white select-none">
             DevLink
           </Link>
 

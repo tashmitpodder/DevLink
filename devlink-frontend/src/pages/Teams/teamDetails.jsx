@@ -13,6 +13,16 @@ function TagChip({ label }) {
   return <span className="tag-chip">#{label}</span>;
 }
 
+function SkillBadge({ label }) {
+  return (
+    <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium
+      bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300
+      border border-gray-200 dark:border-white/10">
+      {label}
+    </span>
+  );
+}
+
 export default function TeamDetails() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -137,9 +147,30 @@ export default function TeamDetails() {
               )}
             </div>
 
+            {/* Hackathon */}
+            {team.hackathon && (
+              <div className="flex items-center gap-2 mt-3 text-sm">
+                <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+                <span className="text-xs text-gray-500 dark:text-gray-400">Hackathon:</span>
+                <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">{team.hackathon}</span>
+              </div>
+            )}
+
             {!!team.tags?.length && (
               <div className="flex flex-wrap gap-2 mt-4">
                 {team.tags.map((t, i) => <TagChip key={i} label={t} />)}
+              </div>
+            )}
+
+            {/* Needed skills */}
+            {Array.isArray(team.neededSkills) && team.neededSkills.length > 0 && (
+              <div className="mt-4">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-2">Skills we need</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {team.neededSkills.map((s, i) => <SkillBadge key={i} label={s} />)}
+                </div>
               </div>
             )}
 

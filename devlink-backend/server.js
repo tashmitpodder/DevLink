@@ -26,7 +26,7 @@ app.use(express.json());    //still can't figure out this middleware part
 // Routes
 app.use("/api/auth", authRoutes);     // auth routes
 app.use("/api", dashboardRoutes);     // dashboard route
-app.use("/api", profileRoutes); // import dashboard routes
+app.use("/api", profileRoutes);  // import dashboard routes
 app.use("/api/posts", postRoutes);
 app.use("/api/teams", teamRoutes);
 

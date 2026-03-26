@@ -5,7 +5,9 @@ import { useAuth } from "../../store/auth";
 
 const FIELDS = [
   { name: "name", label: "Team name *", placeholder: "Awesome Hackers", type: "text", required: true },
+  { name: "hackathon", label: "Hackathon name", placeholder: "e.g. HackMIT 2025, MLH Local Hack Day…", type: "text", required: false },
   { name: "description", label: "Description", placeholder: "What are you building?", type: "area", required: false },
+  { name: "neededSkills", label: "Skills needed (comma separated)", placeholder: "Backend, ML, UI/UX…", type: "text", required: false },
   { name: "tags", label: "Tags (comma separated)", placeholder: "MERN, Hackathon, AI…", type: "text", required: false },
   { name: "repo", label: "Repository URL (optional)", placeholder: "https://github.com/…", type: "text", required: false },
 ];
@@ -15,7 +17,7 @@ export default function CreateTeam() {
   const { token, user } = useAuth();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ name: "", description: "", tags: "", repo: "" });
+  const [form, setForm] = useState({ name: "", hackathon: "", description: "", neededSkills: "", tags: "", repo: "" });
   const [submitting, setSubmitting] = useState(false);
   const [localError, setLocalError] = useState("");
 
@@ -23,7 +25,9 @@ export default function CreateTeam() {
     return (
       <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center bg-gray-50 dark:bg-surface px-4">
         <div className="card p-8 max-w-sm w-full text-center">
-          <div className="text-3xl mb-3">🔒</div>
+          <svg className="w-10 h-10 mx-auto mb-3 text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
           <h2 className="font-semibold text-gray-700 dark:text-gray-300 mb-1">Login required</h2>
           <p className="text-sm text-gray-500">You must be logged in to create a team.</p>
         </div>
@@ -41,7 +45,9 @@ export default function CreateTeam() {
     try {
       const payload = {
         name: form.name,
+        hackathon: form.hackathon,
         description: form.description,
+        neededSkills: form.neededSkills.split(",").map((s) => s.trim()).filter(Boolean),
         tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
         repo: form.repo,
       };

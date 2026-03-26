@@ -7,7 +7,9 @@ const uploadImage = async (file) => {
   fd.append("file", file);
   fd.append("upload_preset", "devlink");
   const res = await fetch("https://api.cloudinary.com/v1_1/dywgao1yc/image/upload", { method: "POST", body: fd });
-  return (await res.json()).secure_url;
+  const data = await res.json();
+  if (!data.secure_url) throw new Error(data.error?.message || "Upload failed");
+  return data.secure_url;
 };
 
 function SkillChip({ label }) {
@@ -25,9 +27,12 @@ export default function Profile() {
   const [profile, setProfile] = useState({ bio: "", skills: "", github: "", linkedin: "", location: "", avatar: "", banner: "" });
   const [isEditing, setIsEditing] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
   const [bannerFile, setBannerFile] = useState(null);
+  const [bannerPreview, setBannerPreview] = useState(null);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
+  const [uploadError, setUploadError] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -43,19 +48,52 @@ export default function Profile() {
 
   const handleChange = (e) => setProfile({ ...profile, [e.target.name]: e.target.value });
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
+
+  const handleBannerChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setBannerFile(file);
+    setBannerPreview(URL.createObjectURL(file));
+  };
+
   const handleSave = async () => {
     setSaving(true);
-    let avatarUrl = profile.avatar;
-    let bannerUrl = profile.banner;
-    if (avatarFile) avatarUrl = await uploadImage(avatarFile);
-    if (bannerFile) bannerUrl = await uploadImage(bannerFile);
-    const updates = { ...profile, avatar: avatarUrl, banner: bannerUrl, skills: profile.skills.split(",").map((s) => s.trim()).filter(Boolean) };
-    await apiRequest("/profile", "PUT", updates, token);
-    setProfile({ ...profile, avatar: avatarUrl, banner: bannerUrl });
-    setAvatarFile(null); setBannerFile(null);
-    setSaving(false); setIsEditing(false);
-    setSaveMsg("Profile saved!");
-    setTimeout(() => setSaveMsg(""), 3000);
+    setUploadError("");
+    try {
+      let avatarUrl = profile.avatar;
+      let bannerUrl = profile.banner;
+      if (avatarFile) avatarUrl = await uploadImage(avatarFile);
+      if (bannerFile) bannerUrl = await uploadImage(bannerFile);
+      const updates = {
+        ...profile,
+        avatar: avatarUrl,
+        banner: bannerUrl,
+        skills: profile.skills.split(",").map((s) => s.trim()).filter(Boolean),
+      };
+      await apiRequest("/profile", "PUT", updates, token);
+      setProfile({ ...profile, avatar: avatarUrl, banner: bannerUrl });
+      setAvatarFile(null); setAvatarPreview(null);
+      setBannerFile(null); setBannerPreview(null);
+      setSaving(false); setIsEditing(false);
+      setSaveMsg("Profile saved!");
+      setTimeout(() => setSaveMsg(""), 3000);
+    } catch (err) {
+      setUploadError(err.message || "Failed to save profile.");
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setAvatarFile(null); setAvatarPreview(null);
+    setBannerFile(null); setBannerPreview(null);
+    setUploadError("");
   };
 
   const initials = (user?.name || "U").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
@@ -68,6 +106,9 @@ export default function Profile() {
     { name: "github", label: "GitHub URL", type: "text", placeholder: "https://github.com/you" },
     { name: "linkedin", label: "LinkedIn URL", type: "text", placeholder: "https://linkedin.com/in/you" },
   ];
+
+  const displayAvatar = avatarPreview || profile.avatar;
+  const displayBanner = bannerPreview || profile.banner;
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-gray-50 dark:bg-surface py-8 px-4">
@@ -83,22 +124,23 @@ export default function Profile() {
 
         {/* Profile card */}
         <div className="card overflow-hidden">
-          {/* Banner — dark monochrome */}
+          {/* Banner */}
           <div className="h-36 relative bg-zinc-900 dark:bg-black">
-            {profile.banner && (
-              <img src={profile.banner} alt="Banner" className="w-full h-full object-cover absolute inset-0" />
+            {displayBanner ? (
+              <img src={displayBanner} alt="Banner" className="w-full h-full object-cover absolute inset-0" />
+            ) : (
+              <div className="absolute inset-0 opacity-[0.08]"
+                style={{
+                  backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)",
+                  backgroundSize: "30px 30px",
+                }}
+              />
             )}
-            <div className="absolute inset-0 opacity-[0.08]"
-              style={{
-                backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)",
-                backgroundSize: "30px 30px",
-              }}
-            />
             {isEditing && (
               <label className="absolute top-3 right-3 cursor-pointer px-3 py-1.5 rounded-lg text-xs font-medium
                 bg-black/50 text-white border border-white/20 hover:bg-black/70 transition">
-                Change Banner
-                <input type="file" className="hidden" accept="image/*" onChange={(e) => setBannerFile(e.target.files[0])} />
+                {bannerFile ? "Banner selected ✓" : "Change Banner"}
+                <input type="file" className="hidden" accept="image/*" onChange={handleBannerChange} />
               </label>
             )}
           </div>
@@ -107,8 +149,8 @@ export default function Profile() {
           <div className="px-6 pb-6">
             <div className="flex items-end justify-between -mt-10 mb-4">
               <div className="relative">
-                {profile.avatar ? (
-                  <img src={profile.avatar} alt="Avatar"
+                {displayAvatar ? (
+                  <img src={displayAvatar} alt="Avatar"
                     className="w-20 h-20 rounded-full border-4 border-white dark:border-surface-card object-cover" />
                 ) : (
                   <div className="avatar w-20 h-20 text-2xl border-4 border-white dark:border-surface-card">
@@ -116,15 +158,15 @@ export default function Profile() {
                   </div>
                 )}
                 {isEditing && (
-                  <label className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900
-                    flex items-center justify-center cursor-pointer text-xs hover:opacity-80 transition">
-                    +
-                    <input type="file" className="hidden" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])} />
+                  <label className="absolute -bottom-1 -right-1 cursor-pointer px-2 py-0.5 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900
+                    text-xs font-bold hover:opacity-80 transition border-2 border-white dark:border-gray-900">
+                    {avatarFile ? "✓" : "+"}
+                    <input type="file" className="hidden" accept="image/*" onChange={handleAvatarChange} />
                   </label>
                 )}
               </div>
               {!isEditing && (
-                <button onClick={() => setIsEditing(true)} className="btn-secondary text-sm">✏️ Edit Profile</button>
+                <button onClick={() => setIsEditing(true)} className="btn-secondary text-sm">Edit Profile</button>
               )}
             </div>
 
@@ -135,7 +177,13 @@ export default function Profile() {
               <p className="text-sm text-gray-400 italic mt-1">No bio yet</p>
             )}
             {profile.location && (
-              <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">📍 {profile.location}</p>
+              <p className="text-xs text-gray-400 mt-2 flex items-center gap-1">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {profile.location}
+              </p>
             )}
 
             {/* Social links */}
@@ -176,6 +224,20 @@ export default function Profile() {
         {isEditing && (
           <div className="card p-6 space-y-4 animate-slide-up">
             <h3 className="font-semibold text-gray-900 dark:text-white">Edit Profile</h3>
+
+            {uploadError && (
+              <div className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3">
+                {uploadError}
+              </div>
+            )}
+
+            {/* Photo upload hints */}
+            <div className="flex gap-3 text-xs text-gray-400 bg-gray-50 dark:bg-white/[0.03] rounded-xl px-4 py-3 border border-gray-100 dark:border-white/[0.06]">
+              <span>Click the <strong className="text-gray-600 dark:text-gray-300">+</strong> on your avatar to change photo.</span>
+              <span>·</span>
+              <span>Click <strong className="text-gray-600 dark:text-gray-300">Change Banner</strong> to update the header image.</span>
+            </div>
+
             {EDIT_FIELDS.map(({ name, label, type, placeholder }) => (
               <div key={name}>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">{label}</label>
@@ -198,7 +260,7 @@ export default function Profile() {
                   </span>
                 ) : "Save Changes"}
               </button>
-              <button onClick={() => setIsEditing(false)} className="btn-secondary flex-1 justify-center">Cancel</button>
+              <button onClick={handleCancel} className="btn-secondary flex-1 justify-center">Cancel</button>
             </div>
           </div>
         )}
