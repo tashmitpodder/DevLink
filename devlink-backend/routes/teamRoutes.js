@@ -119,7 +119,8 @@ router.post("/:slug/join", authMiddleware, async (req, res) => {
       { slug },
       { $addToSet: { members: userId } },
       { new: true }
-    ).populate("owner", "name");
+    ).populate("owner", "name")
+    .populate("members", "name email");
 
     if (!updated) return res.status(404).json({ message: "Team not found" });
 
@@ -143,7 +144,9 @@ router.post("/:slug/leave", authMiddleware, async (req, res) => {
       { slug },
       { $pull: { members: userId } },
       { new: true }
-    ).populate("owner", "name");
+    ).populate("owner", "name")
+    .populate("members", "name email");
+    
 
     if (!updated) return res.status(404).json({ message: "Team not found" });
 
