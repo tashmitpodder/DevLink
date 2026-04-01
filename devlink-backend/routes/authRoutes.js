@@ -1,5 +1,4 @@
 // routes/authRoutes.js
-//what do you mean by routed exactly?
 import express from "express";
 import bcrypt from "bcryptjs";       // for hashing passwords
 import jwt from "jsonwebtoken";      // for authentication
@@ -39,7 +38,7 @@ router.post("/register", async (req, res) => {
 });
 
 // ----------------- LOGIN ROUTE -----------------
-router.post("/login", async (req, res) => { //understand this line
+router.post("/login", async (req, res) => { 
   try {
     const { email, password } = req.body;
 

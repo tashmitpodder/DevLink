@@ -16,13 +16,12 @@ import teamRoutes from "./routes/teamRoutes.js";
 dotenv.config();
 
 // Create an Express app
-const app = express();  //why do we need to create an express app? -- it is easier to create the middleware and routes using express and it's inbuilt functions.
+const app = express();  //change so that you local port is also allowed -- it will help in makes quick changes.
 app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true
 }));
-app.use(express.json());    //still can't figure out this middleware part
-
+app.use(express.json());    
 // Routes
 app.use("/api/auth", authRoutes);     // auth routes
 app.use("/api", dashboardRoutes);     // dashboard route
@@ -36,12 +35,12 @@ const MONGO_URI = process.env.MONGO_URI;
 
 // Connect to MongoDB
 mongoose.connect(MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB error:", err));
+  .then(() => console.log(" MongoDB connected"))
+  .catch((err) => console.error(" MongoDB error:", err));
 
 // Basic test route
 app.get("/", (req, res) => {
-  res.send("API is running... 🚀");  //who will make this get message?
+  res.send("API is running... ");  
 });
 
 // Start server

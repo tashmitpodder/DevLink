@@ -24,7 +24,16 @@ function SkillChip({ label }) {
 
 export default function Profile() {
   const { user, token } = useAuth();
-  const [profile, setProfile] = useState({ bio: "", skills: "", github: "", linkedin: "", location: "", avatar: "", banner: "" });
+  const [profile, setProfile] = useState({
+  bio: "",
+  skills: "",
+  github: "",
+  linkedin: "",
+  location: "",
+  avatar: "",
+  banner: "",
+  teamCount: 0, // ✅ NEW
+});
   const [isEditing, setIsEditing] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
   const [avatarPreview, setAvatarPreview] = useState(null);
@@ -38,9 +47,14 @@ export default function Profile() {
     const fetchProfile = async () => {
       const data = await apiRequest("/profile", "GET", null, token);
       setProfile({
-        bio: data.bio || "", skills: data.skills?.join(", ") || "",
-        github: data.github || "", linkedin: data.linkedin || "",
-        location: data.location || "", avatar: data.avatar || "", banner: data.banner || "",
+        bio: data.bio || "",
+        skills: data.skills?.join(", ") || "",
+        github: data.github || "",
+        linkedin: data.linkedin || "",
+        location: data.location || "",
+        avatar: data.avatar || "",
+        banner: data.banner || "",
+        teamCount: data.teamCount || 0, // ✅ NEW
       });
     };
     if (token) fetchProfile();
@@ -171,6 +185,9 @@ export default function Profile() {
             </div>
 
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user?.name}</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex items-center gap-1">
+  👥 {profile.teamCount} {profile.teamCount === 1 ? "Team" : "Teams"}
+</p>
             {profile.bio ? (
               <p className="text-sm text-gray-400 mt-1 leading-relaxed">{profile.bio}</p>
             ) : (

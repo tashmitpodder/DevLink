@@ -64,22 +64,22 @@ router.put("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-/* 🗑️ DELETE /api/posts/:id */
+/*  DELETE /api/posts/:id */
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
-    // 1️⃣ Check exists
+    // 1️ Check exists
     if (!post) {
       return res.status(404).json({ message: "Post not found" });
     }
 
-    // 2️⃣ Ownership check
+    // 2️ Ownership check
     if (post.author.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not authorized to delete" });
     }
 
-    // 3️⃣ Delete
+    // 3️ Delete
     await post.deleteOne();
 
     res.json({ message: "Post deleted", id: req.params.id });
