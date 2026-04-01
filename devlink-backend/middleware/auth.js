@@ -1,5 +1,5 @@
 // middleware/auth.js
-//understand what is happening in this code
+
 
 import jwt from "jsonwebtoken";
 
