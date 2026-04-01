@@ -35,21 +35,26 @@ export default function TeamDetails() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        setLoading(true);
-        const found = teams?.find((t) => t.slug === slug);
-        if (found) { if (mounted) setTeam(found); }
-        else {
-          const data = await apiRequest(`/teams/${slug}`);
-          if (mounted) setTeam(data);
-        }
-      } catch (err) { if (mounted) setError(err.message || "Failed to load team"); }
-      finally { if (mounted) setLoading(false); }
-    })();
-    return () => { mounted = false; };
-  }, [slug, teams]);
+  let mounted = true;
+
+  (async () => {
+    try {
+      setLoading(true);
+
+      // ALWAYS fetch full team details
+      const data = await apiRequest(`/teams/${slug}`);
+
+      if (mounted) setTeam(data);
+
+    } catch (err) {
+      if (mounted) setError(err.message || "Failed to load team");
+    } finally {
+      if (mounted) setLoading(false);
+    }
+  })();
+
+  return () => { mounted = false; };
+}, [slug]);
 
   if (loading) {
     return (
