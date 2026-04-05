@@ -128,7 +128,7 @@ function App() {
         <Route path="/teams" element={<Teams />} />
         <Route path="/teams/new" element={<CreateTeam />} />
         <Route path="/teams/:slug" element={<TeamDetails />} />
-        <Route path="/Users" element={<UsersPage />} />
+        <Route path="/users" element={<UsersPage />} />
       </Routes>
     </div>
   );
