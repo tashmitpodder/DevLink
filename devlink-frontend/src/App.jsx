@@ -10,6 +10,7 @@ import Posts from "./pages/Post/Posts";
 import Teams from "./pages/Teams/teams";
 import CreateTeam from "./pages/Teams/CreateTeam";
 import TeamDetails from "./pages/Teams/teamDetails";
+import UsersPage from "./pages/UsersPage";
 
 /* ── Hero Landing Page ─────────────────────────────── */
 const FEATURES = [
@@ -127,6 +128,7 @@ function App() {
         <Route path="/teams" element={<Teams />} />
         <Route path="/teams/new" element={<CreateTeam />} />
         <Route path="/teams/:slug" element={<TeamDetails />} />
+        <Route path="/users" element={<UsersPage />} />
       </Routes>
     </div>
   );

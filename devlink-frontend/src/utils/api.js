@@ -48,13 +48,13 @@ export async function apiRequest(endpoint, method = "GET", body = null, token = 
 
     // handle errors
     if (!response.ok) {
-      console.error(`❌ API Error [${response.status}]:`, data.message);
+      console.error(` API Error [${response.status}]:`, data.message);
       throw new Error(data.message || "Request failed");
     }
 
     return data;
   } catch (err) {
-    console.error("🚨 API request error:", err.message);
-    return { message: "Something went wrong ❌" };
+    console.error(" API request error:", err.message);
+    return { message: "Something went wrong " };
   }
 }

@@ -10,6 +10,8 @@ import dashboardRoutes from "./routes/dashboard.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+
 
 
 // Load environment variables
@@ -44,6 +46,7 @@ app.use("/api", dashboardRoutes);     // dashboard route
 app.use("/api", profileRoutes);  // import dashboard routes
 app.use("/api/posts", postRoutes);
 app.use("/api/teams", teamRoutes);
+app.use("/api/users", userRoutes);
 
 // Get PORT and MongoDB URI from .env
 const PORT = process.env.PORT || 5000;
