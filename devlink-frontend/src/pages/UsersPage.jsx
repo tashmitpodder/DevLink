@@ -7,7 +7,7 @@ const UsersPage = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/users");
+        const res = await axios.get("https://devlink-ntqg.onrender.com/api/users");
         console.log("API:", res.data);
         setUsers(res.data);
       } catch (err) {
