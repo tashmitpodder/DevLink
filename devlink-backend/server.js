@@ -15,12 +15,28 @@ import teamRoutes from "./routes/teamRoutes.js";
 // Load environment variables
 dotenv.config();
 
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  "http://localhost:5173",       // Vite default
+  "http://localhost:3000" 
+]
+
 // Create an Express app
 const app = express();  //change so that you local port is also allowed -- it will help in makes quick changes.
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: function (origin, callback) {
+    // allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
+
 app.use(express.json());    
 // Routes
 app.use("/api/auth", authRoutes);     // auth routes
