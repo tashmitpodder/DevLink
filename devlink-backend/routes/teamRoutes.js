@@ -56,7 +56,7 @@ router.get("/", async (req, res) => {
 // Protected: must be logged in
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { name, description, tags = [], repo } = req.body;
+    const { name, description, hackathon, neededSkills = [], tags = [], repo } = req.body;
     if (!name || !name.trim()) return res.status(400).json({ message: "Name is required" });
 
     // build a base slug
@@ -75,7 +75,9 @@ router.post("/", authMiddleware, async (req, res) => {
     const team = await Team.create({
       name: name.trim(),
       slug,
+      hackathon: hackathon ? hackathon.trim() : "",
       description: description || "",
+      neededSkills: Array.isArray(neededSkills) ? neededSkills : (typeof neededSkills === "string" ? neededSkills.split(",").map(s => s.trim()).filter(Boolean) : []),
       tags: Array.isArray(tags) ? tags : (typeof tags === "string" ? tags.split(",").map(t => t.trim()).filter(Boolean) : []),
       repo: repo || "",
       owner: ownerId,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTeams } from "../../store/teamsContext";
 import { useAuth } from "../../store/auth";
@@ -33,12 +33,13 @@ export default function Teams() {
   const { teams, loading, error } = useTeams();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [filter, setFilter] = useState("");
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-gray-50 dark:bg-surface">
       <div className="max-w-5xl mx-auto px-4 py-8">
 
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="section-title">Teams</h1>
             <p className="text-sm text-gray-400 mt-1">Find a team or start your own.</p>
@@ -48,6 +49,16 @@ export default function Teams() {
           ) : (
             <Link to="/login" className="btn-secondary text-sm">Log in to create</Link>
           )}
+        </div>
+
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Filter by hackathon name…"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="input-base max-w-sm"
+          />
         </div>
 
         {/* Skeleton */}
@@ -83,7 +94,7 @@ export default function Teams() {
 
         {!loading && Array.isArray(teams) && teams.length > 0 && (
           <div className="grid sm:grid-cols-2 gap-4">
-            {teams.map((team) => {
+            {teams.filter((team) => !filter.trim() || (team.hackathon || "").toLowerCase().includes(filter.trim().toLowerCase())).map((team) => {
               const neededSkills = Array.isArray(team.neededSkills) ? team.neededSkills : [];
               return (
                 <article
@@ -98,26 +109,13 @@ export default function Teams() {
                     >
                       {team.name}
                     </Link>
+                    {team.hackathon && (
+                      <p className="text-sm text-gray-400 mt-1">{team.hackathon}</p>
+                    )}
                     {team.description && (
-                      <p className="text-sm text-gray-400 mt-1 line-clamp-2">{team.description}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2">{team.description}</p>
                     )}
                   </div>
-
-                  {/* Hackathon badge */}
-                  {team.hackathon && (
-                    <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-                      <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
-                      </svg>
-                      <span className="font-medium">{team.hackathon}</span>
-                    </div>
-                  )}
-
-                  {!!team.tags?.length && (
-                    <div className="flex flex-wrap gap-1.5">
-                      {team.tags.map((t, i) => <TagChip key={i} label={t} />)}
-                    </div>
-                  )}
 
                   {/* Needed skills */}
                   {neededSkills.length > 0 && (

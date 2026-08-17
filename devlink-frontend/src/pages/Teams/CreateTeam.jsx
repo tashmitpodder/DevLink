@@ -5,7 +5,7 @@ import { useAuth } from "../../store/auth";
 
 const FIELDS = [
   { name: "name", label: "Team name *", placeholder: "Awesome Hackers", type: "text", required: true },
-  { name: "hackathon", label: "Hackathon name", placeholder: "e.g. HackMIT 2025, MLH Local Hack Day…", type: "text", required: false },
+  { name: "hackathon", label: "Hackathon name *", placeholder: "e.g. HackMIT 2025, MLH Local Hack Day…", type: "text", required: true },
   { name: "description", label: "Description", placeholder: "What are you building?", type: "area", required: false },
   { name: "neededSkills", label: "Skills needed (comma separated)", placeholder: "Backend, ML, UI/UX…", type: "text", required: false },
   { name: "tags", label: "Tags (comma separated)", placeholder: "MERN, Hackathon, AI…", type: "text", required: false },
@@ -40,6 +40,7 @@ export default function CreateTeam() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) return setLocalError("Team name is required.");
+    if (!form.hackathon.trim()) return setLocalError("Hackathon name is required.");
     setSubmitting(true);
     setLocalError("");
     try {

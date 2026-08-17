@@ -7,7 +7,6 @@ const NAV_LINKS = [
   { to: "/posts", label: "Posts" },
   { to: "/teams", label: "Teams", authRequired: true },
   { to: "/profile", label: "Profile", authRequired: true },
-  { to: "/Users", label: "users", authRequired: true },
 ];
 
 function toggleTheme() {
