@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../store/auth";
+import { useTeams } from "../../store/teamsContext";
 import { apiRequest } from "../../utils/api";
 
 const uploadImage = async (file) => {
@@ -24,6 +26,12 @@ function SkillChip({ label }) {
 
 export default function Profile() {
   const { user, token } = useAuth();
+  const { teams } = useTeams();
+  const myCreatedTeams = teams.filter(t => t.owner?.id === user?.id || t.owner?._id === user?.id || t.owner === user?.id);
+  const myJoinedTeams = teams.filter(t => {
+    const isOwner = t.owner?.id === user?.id || t.owner?._id === user?.id || t.owner === user?.id;
+    return !isOwner && Array.isArray(t.members) && t.members.some(m => m === user?.id || m?._id === user?.id || m?.id === user?.id);
+  });
   const [profile, setProfile] = useState({
   bio: "",
   skills: "",
@@ -180,7 +188,7 @@ export default function Profile() {
                 )}
               </div>
               {!isEditing && (
-                <button onClick={() => setIsEditing(true)} className="btn-secondary text-sm">Edit Profile</button>
+                <button onClick={() => setIsEditing(true)} className="btn-secondary text-sm self-end mb-1">Edit Profile</button>
               )}
             </div>
 
@@ -236,6 +244,48 @@ export default function Profile() {
             )}
           </div>
         </div>
+
+        {/* Created Teams */}
+        {myCreatedTeams.length > 0 && (
+          <div className="card p-6">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Teams I Created</h3>
+            <div className="space-y-2">
+              {myCreatedTeams.map(t => (
+                <Link key={t._id} to={`/teams/${t.slug}`}
+                  className="flex items-center justify-between px-4 py-3 rounded-xl
+                    bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.06]
+                    hover:border-gray-300 dark:hover:border-white/20 transition-colors group">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">{t.name}</p>
+                    {t.hackathon && <p className="text-xs text-gray-400 mt-0.5">{t.hackathon}</p>}
+                  </div>
+                  <span className="text-xs text-gray-400">View →</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Joined Teams */}
+        {myJoinedTeams.length > 0 && (
+          <div className="card p-6">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Teams I've Joined</h3>
+            <div className="space-y-2">
+              {myJoinedTeams.map(t => (
+                <Link key={t._id} to={`/teams/${t.slug}`}
+                  className="flex items-center justify-between px-4 py-3 rounded-xl
+                    bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.06]
+                    hover:border-gray-300 dark:hover:border-white/20 transition-colors group">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors">{t.name}</p>
+                    {t.hackathon && <p className="text-xs text-gray-400 mt-0.5">{t.hackathon}</p>}
+                  </div>
+                  <span className="text-xs text-gray-400">View →</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Edit form */}
         {isEditing && (

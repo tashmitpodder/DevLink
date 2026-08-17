@@ -8,6 +8,8 @@ const profileSchema = new mongoose.Schema(
     github: { type: String, default: "" },
     linkedin: { type: String, default: "" },
     location: { type: String, default: "" },
+    avatar: { type: String, default: "" },
+    banner: { type: String, default: "" },
   },
   { timestamps: true }
 );
