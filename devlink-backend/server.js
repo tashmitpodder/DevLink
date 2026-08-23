@@ -11,6 +11,8 @@ import profileRoutes from "./routes/profileRoutes.js";
 import postRoutes from "./routes/postRoutes.js";
 import teamRoutes from "./routes/teamRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import joinRequestRoutes from "./routes/joinRequestRoutes.js";
+import positionRoutes from "./routes/positionRoutes.js";
 
 
 
@@ -47,6 +49,8 @@ app.use("/api", profileRoutes);  // import dashboard routes
 app.use("/api/posts", postRoutes);
 app.use("/api/teams", teamRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/join-requests", joinRequestRoutes);
+app.use("/api/positions", positionRoutes);
 
 // Get PORT and MongoDB URI from .env
 const PORT = process.env.PORT || 5000;

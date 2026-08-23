@@ -169,7 +169,7 @@ export default function Profile() {
 
           {/* Avatar + info */}
           <div className="px-6 pb-6">
-            <div className="flex items-end justify-between -mt-10 mb-4">
+            <div className="flex items-start justify-between -mt-10 mb-4">
               <div className="relative">
                 {displayAvatar ? (
                   <img src={displayAvatar} alt="Avatar"
@@ -188,7 +188,7 @@ export default function Profile() {
                 )}
               </div>
               {!isEditing && (
-                <button onClick={() => setIsEditing(true)} className="btn-secondary text-sm self-end mb-1">Edit Profile</button>
+                <button onClick={() => setIsEditing(true)} className="btn-secondary text-sm mt-14">Edit Profile</button>
               )}
             </div>
 

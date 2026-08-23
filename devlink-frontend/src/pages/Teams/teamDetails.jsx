@@ -26,7 +26,7 @@ function SkillBadge({ label }) {
 export default function TeamDetails() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { teams, joinTeam, leaveTeam } = useTeams();
+  const { teams, leaveTeam } = useTeams();
   const { user, token } = useAuth();
 
   const [team, setTeam] = useState(null);
@@ -34,76 +34,125 @@ export default function TeamDetails() {
   const [btnLoading, setBtnLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Join request state
+  const [myRequest, setMyRequest] = useState(null); // null | {status, _id}
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestMsg, setRequestMsg] = useState("");
+  const [requestLoading, setRequestLoading] = useState(false);
+  const [requestError, setRequestError] = useState("");
+
+  // Owner: pending requests
+  const [pendingRequests, setPendingRequests] = useState([]);
+
+  // Positions
+  const [positions, setPositions] = useState([]);
+  const [showAddPosition, setShowAddPosition] = useState(false);
+  const [posForm, setPosForm] = useState({ roleTitle: "", description: "", requiredSkills: "" });
+  const [posLoading, setPosLoading] = useState(false);
+
   useEffect(() => {
-  let mounted = true;
+    let mounted = true;
+    (async () => {
+      try {
+        setLoading(true);
+        const data = await apiRequest(`/teams/${slug}`);
+        if (mounted) setTeam(data);
+      } catch (err) {
+        if (mounted) setError(err.message || "Failed to load team");
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, [slug]);
 
-  (async () => {
-    try {
-      setLoading(true);
+  // Once team loaded, fetch join requests + positions
+  useEffect(() => {
+    if (!team) return;
+    const isOwnerCheck = user && team.owner?._id === user.id;
+    const isMemberCheck = Array.isArray(team.members) && user &&
+      team.members.some((m) => (typeof m === "string" ? m : m._id || m.id) === user.id);
 
-      // ALWAYS fetch full team details
-      const data = await apiRequest(`/teams/${slug}`);
+    // Fetch positions (public)
+    apiRequest(`/positions?teamId=${team._id}`).then(setPositions).catch(() => {});
 
-      if (mounted) setTeam(data);
-
-    } catch (err) {
-      if (mounted) setError(err.message || "Failed to load team");
-    } finally {
-      if (mounted) setLoading(false);
+    if (!isMemberCheck && user && token) {
+      apiRequest(`/join-requests/my?teamId=${team._id}`, "GET", null, token)
+        .then(setMyRequest).catch(() => {});
     }
-  })();
+    if (isOwnerCheck && token) {
+      apiRequest(`/join-requests/team/${team._id}`, "GET", null, token)
+        .then(setPendingRequests).catch(() => {});
+    }
+  }, [team, user, token]);
 
-  return () => { mounted = false; };
-}, [slug]);
-
-  if (loading) {
-    return (
-      <div className="min-h-[calc(100vh-3.5rem)] bg-gray-50 dark:bg-surface flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3 text-gray-400">
-          <svg className="animate-spin w-8 h-8" viewBox="0 0 24 24" fill="none">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-          </svg>
-          <p className="text-sm">Loading team…</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center px-4">
-        <div className="card p-8 text-center max-w-sm">
-          <p className="text-red-500 text-sm">{error}</p>
-          <button onClick={() => navigate("/teams")} className="btn-secondary mt-4">← Back to Teams</button>
-        </div>
-      </div>
-    );
-  }
-  if (!team) return null;
-
-  const isOwner = user && team.owner?._id === user.id;
-  const isMember = Array.isArray(team.members) && user &&
-    team.members.some((m) => (typeof m === "string" ? m : m._id || m.id) === user.id);
-
-  const handleJoin = async () => {
-    if (!user) return alert("Login to join");
-    setBtnLoading(true);
-    try { setTeam(await joinTeam(slug, token)); }
-    catch (err) { alert(err.message || "Failed to join"); }
-    finally { setBtnLoading(false); }
-  };
   const handleLeave = async () => {
     setBtnLoading(true);
     try { setTeam(await leaveTeam(slug, token)); }
     catch (err) { alert(err.message || "Failed to leave"); }
     finally { setBtnLoading(false); }
   };
+
   const handleDelete = async () => {
     if (!window.confirm("Delete this team? This cannot be undone.")) return;
     try { await apiRequest(`/teams/${slug}`, "DELETE", null, token); navigate("/teams"); }
     catch (err) { alert(err.message || "Failed to delete team"); }
   };
+
+  const handleRequestJoin = async () => {
+    setRequestLoading(true);
+    setRequestError("");
+    try {
+      const jr = await apiRequest("/join-requests", "POST", { teamId: team._id, message: requestMsg }, token);
+      setMyRequest(jr);
+      setShowRequestForm(false);
+    } catch (err) {
+      setRequestError(err.message || "Failed to send request");
+    } finally {
+      setRequestLoading(false);
+    }
+  };
+
+  const handleRespond = async (requestId, status) => {
+    try {
+      await apiRequest(`/join-requests/${requestId}`, "PUT", { status }, token);
+      setPendingRequests(prev => prev.filter(r => r._id !== requestId));
+      if (status === "accepted") {
+        // Refresh team to show new member
+        const updated = await apiRequest(`/teams/${slug}`);
+        setTeam(updated);
+      }
+    } catch (err) {
+      alert(err.message || "Failed to respond");
+    }
+  };
+
+  if (loading) return (
+    <div className="min-h-[calc(100vh-3.5rem)] bg-gray-50 dark:bg-surface flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3 text-gray-400">
+        <svg className="animate-spin w-8 h-8" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+        </svg>
+        <p className="text-sm">Loading team…</p>
+      </div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="min-h-[calc(100vh-3.5rem)] flex items-center justify-center px-4">
+      <div className="card p-8 text-center max-w-sm">
+        <p className="text-red-500 text-sm">{error}</p>
+        <button onClick={() => navigate("/teams")} className="btn-secondary mt-4">← Back to Teams</button>
+      </div>
+    </div>
+  );
+
+  if (!team) return null;
+
+  const isOwner = user && team.owner?._id === user.id;
+  const isMember = Array.isArray(team.members) && user &&
+    team.members.some((m) => (typeof m === "string" ? m : m._id || m.id) === user.id);
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-gray-50 dark:bg-surface">
@@ -180,21 +229,194 @@ export default function TeamDetails() {
             )}
 
             {/* Actions */}
-            <div className="flex gap-3 mt-5">
-              {isMember ? (
-                <button disabled={btnLoading} onClick={handleLeave} className="btn-secondary">
-                  {btnLoading ? "Working…" : "Leave Team"}
-                </button>
-              ) : (
-                <button disabled={btnLoading} onClick={handleJoin} className="btn-primary">
-                  {btnLoading ? "Working…" : "Join Team"}
-                </button>
-              )}
-              {isOwner && (
-                <button onClick={handleDelete} className="btn-danger">Delete Team</button>
+            <div className="mt-5 space-y-3">
+              <div className="flex gap-3">
+                {isOwner ? (
+                  <button onClick={handleDelete} className="btn-danger">Delete Team</button>
+                ) : isMember ? (
+                  <button disabled={btnLoading} onClick={handleLeave} className="btn-secondary">
+                    {btnLoading ? "Working…" : "Leave Team"}
+                  </button>
+                ) : myRequest ? (
+                  <span className={`inline-flex items-center px-4 py-2 rounded-xl text-sm font-medium border
+                    ${ myRequest.status === "pending"
+                        ? "bg-yellow-50 dark:bg-yellow-900/20 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-800"
+                        : myRequest.status === "accepted"
+                        ? "bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800"
+                        : "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800"
+                    }`}>
+                    { myRequest.status === "pending" ? "⏳ Request Pending"
+                      : myRequest.status === "accepted" ? "✓ Request Accepted"
+                      : "✕ Request Rejected" }
+                  </span>
+                ) : user ? (
+                  <button onClick={() => setShowRequestForm(v => !v)} className="btn-primary">
+                    Request to Join
+                  </button>
+                ) : (
+                  <button onClick={() => navigate("/login")} className="btn-primary">Log in to Join</button>
+                )}
+              </div>
+
+              {/* Request form */}
+              {showRequestForm && !myRequest && (
+                <div className="space-y-2">
+                  <textarea
+                    rows={3}
+                    placeholder="Optional: introduce yourself or explain why you want to join…"
+                    value={requestMsg}
+                    onChange={e => setRequestMsg(e.target.value)}
+                    className="textarea-base"
+                  />
+                  {requestError && <p className="text-xs text-red-500">{requestError}</p>}
+                  <div className="flex gap-2">
+                    <button onClick={handleRequestJoin} disabled={requestLoading} className="btn-primary text-sm">
+                      {requestLoading ? "Sending…" : "Send Request"}
+                    </button>
+                    <button onClick={() => setShowRequestForm(false)} className="btn-secondary text-sm">Cancel</button>
+                  </div>
+                </div>
               )}
             </div>
           </div>
+        </div>
+
+        {/* Owner: Pending join requests */}
+        {isOwner && pendingRequests.length > 0 && (
+          <div className="card p-6">
+            <h2 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+              Join Requests
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800">
+                {pendingRequests.length}
+              </span>
+            </h2>
+            <ul className="space-y-3">
+              {pendingRequests.map(r => (
+                <li key={r._id} className="flex items-start justify-between gap-4 py-3 border-b border-gray-100 dark:border-white/[0.05] last:border-0">
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">{r.candidate?.name || r.candidate?.email}</p>
+                    {r.message && <p className="text-xs text-gray-400 mt-0.5 italic">"{r.message}"</p>}
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <button onClick={() => handleRespond(r._id, "accepted")} className="btn-primary text-xs py-1 px-3">Accept</button>
+                    <button onClick={() => handleRespond(r._id, "rejected")} className="btn-secondary text-xs py-1 px-3">Reject</button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Positions */}
+        <div className="card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              Open Positions
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-white/10">
+                {positions.filter(p => p.status === "Open").length}
+              </span>
+            </h2>
+            {isOwner && (
+              <button onClick={() => setShowAddPosition(v => !v)} className="btn-secondary text-xs">
+                {showAddPosition ? "Cancel" : "+ Add Position"}
+              </button>
+            )}
+          </div>
+
+          {/* Owner: add position form */}
+          {isOwner && showAddPosition && (
+            <div className="mb-4 space-y-2 p-4 rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-100 dark:border-white/[0.06]">
+              <input
+                placeholder="Role title (e.g. UI/UX Designer)"
+                value={posForm.roleTitle}
+                onChange={e => setPosForm(f => ({ ...f, roleTitle: e.target.value }))}
+                className="input-base"
+              />
+              <input
+                placeholder="Description (what they will build)"
+                value={posForm.description}
+                onChange={e => setPosForm(f => ({ ...f, description: e.target.value }))}
+                className="input-base"
+              />
+              <input
+                placeholder="Required skills (comma separated)"
+                value={posForm.requiredSkills}
+                onChange={e => setPosForm(f => ({ ...f, requiredSkills: e.target.value }))}
+                className="input-base"
+              />
+              <button
+                disabled={posLoading || !posForm.roleTitle.trim()}
+                onClick={async () => {
+                  setPosLoading(true);
+                  try {
+                    const p = await apiRequest("/positions", "POST", {
+                      teamId: team._id,
+                      roleTitle: posForm.roleTitle,
+                      description: posForm.description,
+                      requiredSkills: posForm.requiredSkills,
+                    }, token);
+                    setPositions(prev => [...prev, p]);
+                    setPosForm({ roleTitle: "", description: "", requiredSkills: "" });
+                    setShowAddPosition(false);
+                  } catch (err) { alert(err.message); }
+                  finally { setPosLoading(false); }
+                }}
+                className="btn-primary text-sm"
+              >
+                {posLoading ? "Adding…" : "Add Position"}
+              </button>
+            </div>
+          )}
+
+          {positions.length === 0 ? (
+            <p className="text-sm text-gray-400">No positions listed yet.</p>
+          ) : (
+            <ul className="space-y-3">
+              {positions.map(p => (
+                <li key={p._id} className="flex items-start justify-between gap-4 py-3 border-b border-gray-100 dark:border-white/[0.05] last:border-0">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">{p.roleTitle}</span>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        p.status === "Open"
+                          ? "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400"
+                          : "bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400"
+                      }`}>{p.status}</span>
+                    </div>
+                    {p.description && <p className="text-xs text-gray-400 mt-0.5">{p.description}</p>}
+                    {p.requiredSkills?.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1.5">
+                        {p.requiredSkills.map((s, i) => <SkillBadge key={i} label={s} />)}
+                      </div>
+                    )}
+                  </div>
+                  {isOwner && (
+                    <div className="flex gap-1.5 shrink-0">
+                      <button
+                        onClick={async () => {
+                          const newStatus = p.status === "Open" ? "Filled" : "Open";
+                          const updated = await apiRequest(`/positions/${p._id}`, "PUT", { status: newStatus }, token);
+                          setPositions(prev => prev.map(x => x._id === p._id ? updated : x));
+                        }}
+                        className="btn-secondary text-xs py-1 px-2"
+                      >
+                        {p.status === "Open" ? "Mark Filled" : "Reopen"}
+                      </button>
+                      <button
+                        onClick={async () => {
+                          await apiRequest(`/positions/${p._id}`, "DELETE", null, token);
+                          setPositions(prev => prev.filter(x => x._id !== p._id));
+                        }}
+                        className="text-xs text-red-500 hover:text-red-700 px-2"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* Members */}
