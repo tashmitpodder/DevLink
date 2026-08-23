@@ -313,7 +313,7 @@ export default function TeamDetails() {
             <h2 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               Open Positions
               <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-white/10">
-                {positions.filter(p => p.status === "Open").length}
+                {(Array.isArray(positions) ? positions : []).filter(p => p.status === "Open").length}
               </span>
             </h2>
             {isOwner && (
@@ -368,7 +368,7 @@ export default function TeamDetails() {
             </div>
           )}
 
-          {positions.length === 0 ? (
+          {!Array.isArray(positions) || positions.length === 0 ? (
             <p className="text-sm text-gray-400">No positions listed yet.</p>
           ) : (
             <ul className="space-y-3">

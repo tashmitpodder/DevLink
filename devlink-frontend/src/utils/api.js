@@ -55,6 +55,6 @@ export async function apiRequest(endpoint, method = "GET", body = null, token = 
     return data;
   } catch (err) {
     console.error(" API request error:", err.message);
-    return { message: "Something went wrong " };
+    throw err;
   }
 }
