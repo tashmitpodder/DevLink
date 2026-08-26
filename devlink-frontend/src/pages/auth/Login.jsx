@@ -8,13 +8,20 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [slowNotice, setSlowNotice] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSlowNotice(false);
     setLoading(true);
+
+    const timer = setTimeout(() => {
+      setSlowNotice(true);
+    }, 2500);
+
     try {
       const data = await apiRequest("/auth/login", "POST", { email, password });
       if (data.token) {
@@ -24,9 +31,15 @@ export default function Login() {
         setError(data.message || "Login failed. Please try again.");
       }
     } catch (err) {
-      setError(err.message || "Something went wrong.");
+      if (err.message === "Failed to fetch" || err.message?.includes("NetworkError")) {
+        setError("Unable to reach backend server. The server may be starting up—please wait a moment and try again.");
+      } else {
+        setError(err.message || "Something went wrong.");
+      }
     } finally {
+      clearTimeout(timer);
       setLoading(false);
+      setSlowNotice(false);
     }
   };
 
@@ -82,6 +95,13 @@ export default function Login() {
               <input type="password" placeholder="••••••••" value={password}
                 onChange={(e) => setPassword(e.target.value)} className="input-base" required />
             </div>
+
+            {loading && slowNotice && (
+              <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-3 flex items-center gap-2 animate-fade-in">
+                <span className="text-base shrink-0">⏳</span>
+                <span>Server is starting up (Render free tier cold start). This may take ~30–40 seconds on first request...</span>
+              </div>
+            )}
 
             {error && (
               <div className="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl px-4 py-3">

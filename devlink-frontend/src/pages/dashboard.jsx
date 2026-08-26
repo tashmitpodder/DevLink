@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { usePosts } from "../store/postsContext";
 
 function Initials({ name }) {
@@ -54,6 +55,18 @@ function PostCard({ post }) {
 
 export default function Dashboard() {
   const { feed, loading, error } = usePosts();
+  const [slowNotice, setSlowNotice] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setSlowNotice(false);
+      return;
+    }
+    const timer = setTimeout(() => {
+      setSlowNotice(true);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   return (
     <div className="min-h-[calc(100vh-3.5rem)] bg-gray-50 dark:bg-surface">
@@ -70,7 +83,15 @@ export default function Dashboard() {
         )}
 
         {loading && (
-          <div className="space-y-4">{[1, 2, 3].map((i) => <SkeletonCard key={i} />)}</div>
+          <div className="space-y-4">
+            {slowNotice && (
+              <div className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-3 flex items-center gap-2 animate-fade-in mb-4">
+                <span className="text-base shrink-0">⏳</span>
+                <span>Waking up server (Render free tier cold start)... Feed will load shortly!</span>
+              </div>
+            )}
+            {[1, 2, 3].map((i) => <SkeletonCard key={i} />)}
+          </div>
         )}
 
         {!loading && feed.length === 0 && (
