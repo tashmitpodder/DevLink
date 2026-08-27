@@ -86,12 +86,6 @@ DevLink/
 
 ---
 
-Watch the demo here:
-
-[![Demo Video](https://img.youtube.com/vi/Xy_NZ0jzDcA/0.jpg)](https://youtu.be/Xy_NZ0jzDcA)
-
----
-
 ## 🧩 Running the App Locally
 
 ### Prerequisites
@@ -131,3 +125,9 @@ Watch the demo here:
    npm run dev
    ```
 4. Access the web app at `http://localhost:5173`.
+
+---
+
+## 🪧 Demo
+
+[Watch the demo on YouTube](https://youtu.be/Xy_NZ0jzDcA)
