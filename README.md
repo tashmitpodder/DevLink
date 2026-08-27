@@ -125,3 +125,17 @@ DevLink/
    npm run dev
    ```
 4. Access the web app at `http://localhost:5173`.
+
+---
+
+## 🎥 Demo
+
+Take a quick look at the application in action, including the main features,
+user flow, and overall interface.
+
+▶️ **[Watch the Demo on YouTube](https://youtu.be/Xy_NZ0jzDcA)**
+
+> 💡 **Tip:** The demo provides a quick overview of the application and
+> demonstrates how the different parts of the system work together.
+
+---
