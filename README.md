@@ -128,6 +128,14 @@ DevLink/
 
 ---
 
-## 🪧 Demo
+## 🎥 Demo
 
-[Watch the demo on YouTube](https://youtu.be/Xy_NZ0jzDcA)
+Take a quick look at the application in action, including the main features,
+user flow, and overall interface.
+
+▶️ **[Watch the Demo on YouTube](https://youtu.be/Xy_NZ0jzDcA)**
+
+> 💡 **Tip:** The demo provides a quick overview of the application and
+> demonstrates how the different parts of the system work together.
+
+---
