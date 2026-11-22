@@ -127,31 +127,70 @@ DevLink/
 4. Access the web app at `http://localhost:5173`.
 
 ---
-## 🪧 Visual Preview 
+## 🪧 Visual Preview
 
-These are some of the major pages in this application. Full experiencing the full application with all it's features, I would recommend you visit the website, create an account and explore the functionality. In case, you really don't wanna go through the hassle of creating an account, you can watch the DEMO video posted on Youtube below.
+Explore the key pages of DevLink below. To experience the full application and its features, visit the Live Website and create an account. Alternatively, check out the DEMO video to see DevLink in action without signing up.
 
-### Landing Page
-![DevLink Dark Landing Page](screenshots/home_dark.png)
-![DevLink White Landing Page](screenshots/home_light.png)
-
-### Login
-![Login Page](screenshots/login.png)
-
-### Community Feed
-![Community Feed](screenshots/dashboard_dark.png)
-![Community Feed](screenshots/dashboard_light.png)
-
-### Teams
-![Teams Page](screenshots/teams.png)
-![Create Teams Page](screenshots/create_teams.png)
-
-### Posts
-![Posts Page](screenshots/posts.png)
-![Edit Posts Page](screenshots/edit_posts.png)
-
-### Profile
-![Profile Page](screenshots/profile.png)
+<table>
+  <tr>
+    <td colspan="2" align="center">
+      <h3>🏠 Landing Page</h3>
+      <img src="screenshots/landing.png" width="100%" alt="DevLink Dark Landing Page"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <h3>🌙 Dark Mode</h3>
+      <img src="screenshots/home_dark.png" width="100%" alt="DevLink Dark Mode"/>
+    </td>
+    <td width="50%" align="center">
+      <h3>☀️ Light Mode</h3>
+      <img src="screenshots/home_light.png" width="100%" alt="DevLink Light Mode"/>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <h3>🔐 Authentication</h3>
+      <img src="screenshots/login.png" width="100%" alt="DevLink Login Page"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <h3>🌙 Community Feed</h3>
+      <img src="screenshots/dashboard_dark.png" width="100%" alt="DevLink Community Feed Dark Mode"/>
+    </td>
+    <td width="50%" align="center">
+      <h3>☀️ Community Feed</h3>
+      <img src="screenshots/dashboard_light.png" width="100%" alt="DevLink Community Feed Light Mode"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <h3>👥 Team Discovery</h3>
+      <img src="screenshots/teams.png" width="100%" alt="DevLink Teams Page"/>
+    </td>
+    <td width="50%" align="center">
+      <h3>🚀 Create a Team</h3>
+      <img src="screenshots/create_teams.png" width="100%" alt="DevLink Create Team Page"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" align="center">
+      <h3>📝 Posts</h3>
+      <img src="screenshots/posts.png" width="100%" alt="DevLink Posts Page"/>
+    </td>
+    <td width="50%" align="center">
+      <h3>✏️ Edit Posts</h3>
+      <img src="screenshots/edit_posts.png" width="100%" alt="DevLink Edit Posts Page"/>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center">
+      <h3>👤 User Profile</h3>
+      <img src="screenshots/profile.png" width="100%" alt="DevLink Profile Page"/>
+    </td>
+  </tr>
+</table>
 
 ---
 
