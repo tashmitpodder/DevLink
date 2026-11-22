@@ -134,53 +134,43 @@ Explore the key pages of DevLink below. To experience the full application and i
 <table>
   <tr>
     <td width="50%" align="center">
-      <h3>🌙 Home Page - Dark Mode</h3>
       <img src="screenshots/home_dark.png" width="100%" alt="DevLink Dark Mode"/>
     </td>
     <td width="50%" align="center">
-      <h3>☀️ Home Page - Light Mode</h3>
       <img src="screenshots/home_light.png" width="100%" alt="DevLink Light Mode"/>
     </td>
   </tr>
   <tr>
     <td colspan="2" align="center">
-      <h3>🔐 Authentication</h3>
       <img src="screenshots/login.png" width="100%" alt="DevLink Login Page"/>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <h3>🌙 Community Feed</h3>
       <img src="screenshots/dashboard_dark.png" width="100%" alt="DevLink Community Feed Dark Mode"/>
     </td>
     <td width="50%" align="center">
-      <h3>☀️ Community Feed</h3>
       <img src="screenshots/dashboard_light.png" width="100%" alt="DevLink Community Feed Light Mode"/>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <h3>👥 Team Discovery</h3>
       <img src="screenshots/teams.png" width="100%" alt="DevLink Teams Page"/>
     </td>
     <td width="50%" align="center">
-      <h3>🚀 Create a Team</h3>
       <img src="screenshots/create_teams.png" width="100%" alt="DevLink Create Team Page"/>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
-      <h3>📝 Posts</h3>
       <img src="screenshots/posts.png" width="100%" alt="DevLink Posts Page"/>
     </td>
     <td width="50%" align="center">
-      <h3>✏️ Edit Posts</h3>
       <img src="screenshots/edit_posts.png" width="100%" alt="DevLink Edit Posts Page"/>
     </td>
   </tr>
   <tr>
     <td colspan="2" align="center">
-      <h3>👤 User Profile</h3>
       <img src="screenshots/profile.png" width="100%" alt="DevLink Profile Page"/>
     </td>
   </tr>
