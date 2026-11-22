@@ -133,18 +133,12 @@ Explore the key pages of DevLink below. To experience the full application and i
 
 <table>
   <tr>
-    <td colspan="2" align="center">
-      <h3>🏠 Landing Page</h3>
-      <img src="screenshots/landing.png" width="100%" alt="DevLink Dark Landing Page"/>
-    </td>
-  </tr>
-  <tr>
     <td width="50%" align="center">
-      <h3>🌙 Dark Mode</h3>
+      <h3>🌙 Home Page - Dark Mode</h3>
       <img src="screenshots/home_dark.png" width="100%" alt="DevLink Dark Mode"/>
     </td>
     <td width="50%" align="center">
-      <h3>☀️ Light Mode</h3>
+      <h3>☀️ Home Page - Light Mode</h3>
       <img src="screenshots/home_light.png" width="100%" alt="DevLink Light Mode"/>
     </td>
   </tr>
