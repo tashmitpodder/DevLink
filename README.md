@@ -127,6 +127,33 @@ DevLink/
 4. Access the web app at `http://localhost:5173`.
 
 ---
+## 🪧 Visual Preview 
+
+These are some of the major pages in this application. Full experiencing the full application with all it's features, I would recommend you visit the website, create an account and explore the functionality. In case, you really don't wanna go through the hassle of creating an account, you can watch the DEMO video posted on Youtube below.
+
+### Landing Page
+![DevLink Dark Landing Page](screenshots/home_dark.png)
+![DevLink White Landing Page](screenshots/home_light.png)
+
+### Login
+![Login Page](screenshots/login.png)
+
+### Community Feed
+![Community Feed](screenshots/dashboard_dark.png)
+![Community Feed](screenshots/dashboard_light.png)
+
+### Teams
+![Teams Page](screenshots/teams.png)
+![Create Teams Page](screenshots/create_teams.png)
+
+### Posts
+![Posts Page](screenshots/posts.png)
+![Edit Posts Page](screenshots/edit_posts.png)
+
+### Profile
+![Profile Page](screenshots/profile.png)
+
+---
 
 ## 🎥 Demo
 
